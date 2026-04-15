@@ -6,6 +6,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { getStoredObservations } from "../../lib/storage/observations-storage";
 import type { Observation } from "../../types/observation";
+import { getArchivedObservations } from "../../lib/storage/archived-observations-storage";
 
 const MapView = dynamic(() => import("./map-view").then((mod) => mod.MapView), {
   ssr: false,
@@ -41,11 +42,16 @@ export function MapScreen() {
   const [mapCenter, setMapCenter] = useState<[number, number]>(initialCenter);
   const [mapKey, setMapKey] = useState(0);
   const [observations, setObservations] = useState<Observation[]>([]);
+  const [archivedObservations, setArchivedObservations] = useState<Observation[]>([]);
+  const [showArchivedObservations, setShowArchivedObservations] = useState(false);
   const [statusMessage, setStatusMessage] = useState("");
 
   useEffect(() => {
     const storedObservations = getStoredObservations();
+    const storedArchivedObservations = getArchivedObservations();
+
     setObservations(storedObservations);
+    setArchivedObservations(storedArchivedObservations);
   }, []);
 
   useEffect(() => {
@@ -154,6 +160,8 @@ export function MapScreen() {
         key={mapKey}
         userPosition={userPosition}
         observations={observations}
+        archivedObservations={archivedObservations}
+        showArchivedObservations={showArchivedObservations}
         onCenterChange={handleCenterChange}
         initialCenter={mapCenter}
         initialZoom={isRepositionMode ? 16 : 13}
@@ -180,8 +188,20 @@ export function MapScreen() {
 
       <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[2000] px-4 pb-6 pt-10">
         <div className="pointer-events-auto mx-auto flex max-w-md flex-col gap-3">
-          <div className="mx-auto w-fit rounded-lg bg-white/90 px-2 py-1 text-center text-[11px] text-neutral-600 shadow-sm">
-            {mapCenter[0].toFixed(5)}, {mapCenter[1].toFixed(5)}
+          <div className="flex w-full items-center justify-between">
+            <button
+              type="button"
+              onClick={() => setShowArchivedObservations((prev) => !prev)}
+              className="rounded-lg bg-white/70 px-2.5 py-1.5 text-[11px] font-medium text-neutral-900 shadow-sm"
+            >
+              {showArchivedObservations
+                ? "Masquer l’historique"
+                : "Afficher l’historique"}
+            </button>
+
+            <div className="rounded-lg bg-white/70 px-2.5 py-1.5 text-right text-[11px] text-neutral-600 shadow-sm">
+              {mapCenter[0].toFixed(5)}, {mapCenter[1].toFixed(5)}
+            </div>
           </div>
 
           <button

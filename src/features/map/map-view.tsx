@@ -61,6 +61,22 @@ const editingObservationIcon = L.divIcon({
   iconAnchor: [11, 11],
 });
 
+const archivedObservationIcon = L.divIcon({
+  className: "",
+  html: `
+    <div style="
+      width: 16px;
+      height: 16px;
+      border-radius: 9999px;
+      background: #6b7280;
+      border: 3px solid white;
+      box-shadow: 0 0 0 2px #6b7280;
+    "></div>
+  `,
+  iconSize: [16, 16],
+  iconAnchor: [8, 8],
+});
+
 type BaseMapKey = "plan" | "satellite" | "relief";
 
 function MapSizeFixer() {
@@ -170,7 +186,6 @@ function ObservationPopupContent({
   observation: Observation;
   isEditing: boolean;
 }) {
-
   return (
     <div className="space-y-1 text-sm">
       {isEditing && (
@@ -219,7 +234,7 @@ function ObservationPopupContent({
       <div className="pt-2">
         <Link
           href={`/report?id=${observation.id}&returnTo=map`}
-          className="inline-flex rounded-lg bg-black px-3 py-2 text-sm font-medium text-white"
+          className="inline-flex rounded-lg border border-black bg-white px-3 py-2 text-sm font-medium"
         >
           Modifier la donnée
         </Link>
@@ -237,6 +252,8 @@ function ObservationPopupContent({
 export function MapView({
   userPosition = null,
   observations = [],
+  archivedObservations = [],
+  showArchivedObservations = false,
   onCenterChange,
   initialCenter,
   initialZoom = 13,
@@ -244,6 +261,8 @@ export function MapView({
 }: {
   userPosition?: [number, number] | null;
   observations?: Observation[];
+  archivedObservations?: Observation[];
+  showArchivedObservations?: boolean;
   onCenterChange?: (position: [number, number]) => void;
   initialCenter: [number, number];
   initialZoom?: number;
@@ -327,6 +346,38 @@ export function MapView({
             </Marker>
           );
         })}
+
+        {showArchivedObservations &&
+          archivedObservations.map((observation) => (
+            <Marker
+              key={`archived-${observation.id}`}
+              position={[observation.latitude, observation.longitude]}
+              icon={archivedObservationIcon}
+            >
+              <Popup closeButton={false} autoPan={true}>
+                <div className="space-y-1 text-sm">
+                  <p>
+                    <strong>Observation archivée</strong>
+                  </p>
+                  <p>
+                    <strong>Date :</strong> {observation.date} à {observation.time}
+                  </p>
+                  <p>
+                    <strong>Chamois observés :</strong> {observation.numberOfAnimals}
+                  </p>
+
+                  <div className="pt-2">
+                    <a
+                      href={`/observations/${observation.id}?returnTo=map`}
+                      className="inline-flex rounded-lg border border-black bg-white px-3 py-2 text-sm font-medium"
+                    >
+                      Voir la donnée
+                    </a>
+                  </div>
+                </div>
+              </Popup>
+            </Marker>
+          ))}
       </MapContainer>
 
       <div className="absolute right-3 top-3 z-[1500] flex gap-2">
