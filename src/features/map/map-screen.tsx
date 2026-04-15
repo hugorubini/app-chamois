@@ -55,6 +55,20 @@ export function MapScreen() {
   }, []);
 
   useEffect(() => {
+    if (statusMessage !== "Position récupérée avec succès.") {
+      return;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setStatusMessage("");
+    }, 3000);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [statusMessage]);
+
+  useEffect(() => {
     if (hasUrlCoordinates) {
       const nextCenter: [number, number] = [parsedLat, parsedLng];
       setMapCenter(nextCenter);
@@ -180,7 +194,7 @@ export function MapScreen() {
         </div>
 
         {statusMessage && (
-          <div className="pointer-events-auto mx-auto mt-3 max-w-md rounded-xl bg-white px-4 py-3 text-sm text-neutral-700 shadow-sm">
+          <div className="pointer-events-auto mx-auto mt-3 max-w-md rounded-xl bg-white/70 px-4 py-3 text-sm text-neutral-700 shadow-sm">
             {statusMessage}
           </div>
         )}
