@@ -13,6 +13,23 @@ export type ObservationBehavior =
   | "flight"
   | "other";
 
+export type ObservationSex = "male" | "female" | "unknown";
+export type ObservationAgeClass = "adult" | "young" | "kid" | "unknown";
+export type ObservationHasKid = "yes" | "no" | "unknown";
+export type ObservationBodyCondition =
+  | "normal"
+  | "thin"
+  | "injured"
+  | "other"
+  | "unknown";
+export type ObservationDisturbance =
+  | "none"
+  | "dog"
+  | "car"
+  | "human"
+  | "other"
+  | "unknown";
+
 export interface Observation {
   id: string;
   date: string;
@@ -27,6 +44,12 @@ export interface Observation {
   certainty: ObservationCertainty;
   observationType: ObservationType;
   behavior: ObservationBehavior;
+  sex?: ObservationSex;
+  ageClass?: ObservationAgeClass;
+  hasKid?: ObservationHasKid;
+  bodyCondition?: ObservationBodyCondition;
+  disturbance?: ObservationDisturbance;
+  healthComment?: string;
   photoIds?: string[];
   syncStatus: "pending" | "sent" | "error";
 }
