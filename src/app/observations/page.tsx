@@ -86,9 +86,9 @@ function ObservationPhotos({ photoIds }: { photoIds?: string[] }) {
   }
 
   return (
-    <div>
-      <p>Photos :</p>
-      <div className="mt-2 grid grid-cols-2 gap-2">
+    <div className="space-y-2">
+      <p className="text-sm font-medium text-neutral-800">Photos</p>
+      <div className="grid grid-cols-2 gap-2">
         {photoUrls.map((photoUrl, index) => (
           <img
             key={`${photoUrl}-${index}`}
@@ -215,6 +215,12 @@ export default function ObservationsPage() {
           Retrouvez ici les signalements encore présents sur cet appareil et prêts à être envoyés.
         </p>
 
+        <p className="mt-3 text-sm font-medium text-neutral-500">
+          {observations.length > 0
+            ? `${observations.length} observation${observations.length > 1 ? "s" : ""} en attente`
+            : "Aucune observation en attente"}
+        </p>
+
         {observations.length > 0 && (
           <div className="mt-6 space-y-3">
             <button
@@ -250,8 +256,13 @@ export default function ObservationsPage() {
 
         <div className="mt-8 space-y-4">
           {observations.length === 0 ? (
-            <div className="rounded-2xl border border-neutral-200 p-4 text-sm text-neutral-600">
-              Aucune observation en attente d’envoi.
+            <div className="rounded-2xl border border-neutral-200 p-5 text-sm text-neutral-600">
+              <p className="font-medium text-neutral-800">
+                Aucune observation en attente d’envoi.
+              </p>
+              <p className="mt-2">
+                Les nouvelles observations que vous enregistrez apparaîtront ici avant leur envoi.
+              </p>
             </div>
           ) : (
             observations.map((observation) => (
@@ -259,16 +270,42 @@ export default function ObservationsPage() {
                 key={observation.id}
                 className="rounded-2xl border border-neutral-200 p-4"
               >
-                <p className="text-sm text-neutral-500">
-                  {observation.date} à {observation.time}
-                </p>
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="text-sm text-neutral-500">
+                      {observation.date} à {observation.time}
+                    </p>
 
-                <h2 className="mt-2 text-lg font-semibold">
-                  {observation.numberOfAnimals} chamois observé
-                  {observation.numberOfAnimals > 1 ? "s" : ""}
-                </h2>
+                    <h2 className="mt-2 text-lg font-semibold">
+                      {observation.numberOfAnimals} chamois observé
+                      {observation.numberOfAnimals > 1 ? "s" : ""}
+                    </h2>
+                  </div>
 
-                <div className="mt-3 space-y-1 text-sm text-neutral-700">
+                  <div className="rounded-full bg-neutral-100 px-3 py-1 text-xs font-medium text-neutral-700">
+                    {getSyncStatusLabel(observation.syncStatus)}
+                  </div>
+                </div>
+
+                <div className="mt-4 flex flex-wrap gap-2">
+                  <span className="rounded-full bg-neutral-100 px-3 py-1 text-xs text-neutral-700">
+                    {getCertaintyLabel(observation.certainty)}
+                  </span>
+                  <span className="rounded-full bg-neutral-100 px-3 py-1 text-xs text-neutral-700">
+                    {getObservationTypeLabel(observation.observationType)}
+                  </span>
+                  <span className="rounded-full bg-neutral-100 px-3 py-1 text-xs text-neutral-700">
+                    {getBehaviorLabel(observation.behavior)}
+                  </span>
+                  <span className="rounded-full bg-neutral-100 px-3 py-1 text-xs text-neutral-700">
+                    Collier : {getCollarLabel(observation.collarPresence)}
+                  </span>
+                  <span className="rounded-full bg-neutral-100 px-3 py-1 text-xs text-neutral-700">
+                    Photos : {observation.photoIds && observation.photoIds.length > 0 ? "Oui" : "Non"}
+                  </span>
+                </div>
+
+                <div className="mt-4 space-y-1 text-sm text-neutral-700">
                   <p>Latitude : {observation.latitude}</p>
                   <p>Longitude : {observation.longitude}</p>
 
@@ -276,17 +313,11 @@ export default function ObservationsPage() {
                     <p>Précision GPS : {observation.gpsAccuracy} m</p>
                   )}
 
-                  <p>Certitude : {getCertaintyLabel(observation.certainty)}</p>
-                  <p>Type : {getObservationTypeLabel(observation.observationType)}</p>
-                  <p>Comportement : {getBehaviorLabel(observation.behavior)}</p>
-                  <p>Collier : {getCollarLabel(observation.collarPresence)}</p>
-                  <p>Statut : {getSyncStatusLabel(observation.syncStatus)}</p>
-
                   {observation.collarPresence === "yes" &&
                     observation.collarNumbers &&
                     observation.collarNumbers.length > 0 && (
                       <div>
-                        <p>Numéros des colliers :</p>
+                        <p className="font-medium text-neutral-800">Numéros des colliers :</p>
                         <ul className="ml-5 list-disc">
                           {observation.collarNumbers.map((number) => (
                             <li key={number}>{number}</li>
@@ -297,11 +328,13 @@ export default function ObservationsPage() {
 
                   {observation.comment && observation.comment.trim() !== "" && (
                     <div>
-                      <p>Commentaire :</p>
+                      <p className="font-medium text-neutral-800">Commentaire :</p>
                       <p className="text-neutral-600">{observation.comment}</p>
                     </div>
                   )}
+                </div>
 
+                <div className="mt-4">
                   <ObservationPhotos photoIds={observation.photoIds} />
                 </div>
 
@@ -326,6 +359,6 @@ export default function ObservationsPage() {
           )}
         </div>
       </div>
-    </main >
+    </main>
   );
 }
