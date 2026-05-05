@@ -127,6 +127,20 @@ export default function InfoPage() {
               sur le terrain.
             </p>
           </section>
+
+          <section className="rounded-2xl border border-neutral-200 p-4">
+            <h2 className="text-lg font-semibold">Qui gère ce projet ?</h2>
+            <p className="mt-3 text-sm leading-6 text-neutral-700">
+              Cette application a été développée dans le cadre du suivi participatif de
+              la réintroduction du chamois en Ardèche. Les données transmises ont
+              vocation à compléter les suivis de terrain et à être exploitées par les
+              gestionnaires du projet.
+            </p>
+            <p className="mt-3 text-sm leading-6 text-neutral-700">
+              La structure porteuse du suivi est la Fédération Départementale des
+              Chasseurs de l’Ardèche.
+            </p>
+          </section>
         </div>
       </div>
     </main>
